@@ -26,6 +26,7 @@ import (
 	"github.com/cli/cli/v2/internal/gh"
 	"github.com/cli/cli/v2/internal/gh/ghtelemetry"
 	"github.com/cli/cli/v2/internal/gherrs"
+	"github.com/cli/cli/v2/internal/ghinstance"
 	"github.com/cli/cli/v2/internal/telemetry"
 	"github.com/cli/cli/v2/internal/update"
 	"github.com/cli/cli/v2/pkg/cmd/factory"
@@ -195,8 +196,9 @@ func Main() exitCode {
 		slices.Sort(flags)
 
 		var dimensions = ghtelemetry.Dimensions{
-			"command": executedCmd.CommandPath(),
-			"flags":   strings.Join(flags, ","),
+			"command":           executedCmd.CommandPath(),
+			"flags":             strings.Join(flags, ","),
+			"guessed_host_type": ghinstance.CategorizeHost(telemetry.GuessTargetHost(executedCmd, cmdFactory.BaseRepo, cmdFactory.Config)),
 		}
 		maps.Copy(dimensions, errorDims)
 
